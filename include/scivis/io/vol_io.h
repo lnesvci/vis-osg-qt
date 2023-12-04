@@ -2,11 +2,14 @@
 #define SCIVIS_IO_VOL_IO_H
 
 #include <fstream>
+#include <sstream>
 #include <limits>
 
 #include <array>
 #include <vector>
 #include <unordered_set>
+
+#include <osg/Vec3>
 
 namespace SciVis
 {
@@ -71,6 +74,36 @@ namespace SciVis
 				const std::string& filePath, const std::array<uint32_t, 3>& dim,
 				float nullVal, std::string* errMsg = nullptr)
 			{
+			}
+			/* 读取txt点云文件 */
+			static std::vector<osg::Vec3f> LoadFromFile(const std::string& filePath, std::string* errMsg = nullptr)
+			{
+				std::ifstream is(filePath);
+				if (!is.is_open()) {
+					if (errMsg)
+						*errMsg = "Invalid File Path";
+					return std::vector<osg::Vec3f>();
+				}
+
+				std::string line;
+				std::vector<osg::Vec3f> ret;
+				int flag = 0;
+				while (std::getline(is, line)) {
+					if (flag == 0) {
+						flag++;
+						continue;
+					}
+					float x, y, z;
+					std::stringstream ss(line);
+					ss >> x;
+					ss >> y;
+					ss >> z;
+					osg::Vec3f point(x, y, z);
+					ret.push_back(point);
+					flag--;
+				}
+				return ret;
+
 			}
 		};
 

@@ -239,161 +239,27 @@ namespace SciVis
 				}
 
 				/*
-				* 函数: DrawPlot
-				* 功能: 绘制散点图
-				*/
-
-				void DrawPlot()
-				{
-					//精细度
-					osg::TessellationHints* hints1 = new osg::TessellationHints();
-					//设置精细度
-					hints1->setDetailRatio(0.3f);
-					for (size_t i = 0; i < volDiscreteDat->size(); ++i) {
-						osg::ref_ptr<osg::Sphere> pSphereShape = new osg::Sphere(volDiscreteDat->at(i), 0.08f);
-						osg::ref_ptr<osg::ShapeDrawable> pShapeDrawable = new osg::ShapeDrawable(pSphereShape.get(), hints1);
-						geode->addDrawable(pShapeDrawable.get());
-					}
-					auto states = geode->getOrCreateStateSet();
-					states->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-					states->setMode(GL_LIGHTING, osg::StateAttribute::ON);
-				}
-
-				/*
-				* 函数: MakeCoordinate
-				* 功能: 绘制坐标轴
-				*/
-				osg::Geode* MakeCoordinate(const std::array<int32_t, 3>& cooDimMax, const std::array<int32_t, 3>& cooDimMin)
-				{
-					// 创建保存几何信息的对象
-					osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
-
-					//创建四个顶点
-					osg::ref_ptr<osg::Vec3Array> v = new osg::Vec3Array();
-					v->push_back(osg::Vec3f(cooDimMax[0], cooDimMin[1], cooDimMin[2]));
-					v->push_back(osg::Vec3f(cooDimMin[0], cooDimMin[1], cooDimMin[2]));
-					v->push_back(osg::Vec3f(cooDimMin[0], cooDimMin[1], cooDimMin[2]));
-					v->push_back(osg::Vec3f(cooDimMin[0], cooDimMax[1], cooDimMin[2]));
-					v->push_back(osg::Vec3f(cooDimMax[0], cooDimMin[1], cooDimMin[2]));
-					v->push_back(osg::Vec3f(cooDimMax[0], cooDimMin[1], cooDimMax[2]));
-					geom->setVertexArray(v.get());
-
-					osg::ref_ptr<osg::Vec4Array> c = new osg::Vec4Array();
-					c->push_back(osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f));
-					c->push_back(osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f));
-					c->push_back(osg::Vec4(0.0f, 1.0f, 0.0f, 1.0f));
-					c->push_back(osg::Vec4(0.0f, 1.0f, 0.0f, 1.0f));
-					c->push_back(osg::Vec4(0.0f, 0.0f, 1.0f, 1.0f));
-					c->push_back(osg::Vec4(0.0f, 0.0f, 1.0f, 1.0f));
-					geom->setColorArray(c.get());
-					geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
-
-					geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2));
-					geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 2, 2));
-					geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 4, 2));
-
-					osg::ref_ptr<osg::Geode> axisGeode = new osg::Geode();
-
-					axisGeode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-					axisGeode->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-					axisGeode->getOrCreateStateSet()->setAttribute(new osg::LineWidth(3.0f), osg::StateAttribute::ON);
-
-					axisGeode->addDrawable(geom.get());
-					return axisGeode.release();
-				}
-
-
-				/*
-				* 函数: MakeCoordinate
-				* 功能: 绘制坐标轴
-				*/
-				osg::Geode* MakeCoordinate(const std::array<int32_t, 3>& cooDimMax )
-				{
-					// 创建保存几何信息的对象
-					osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
-
-					//创建四个顶点
-					osg::ref_ptr<osg::Vec3Array> v = new osg::Vec3Array();
-					v->push_back(osg::Vec3f(0.0f, 0.0f, 0.0f));
-					v->push_back(osg::Vec3f(cooDimMax[0], 0.0f, 0.0f));
-					v->push_back(osg::Vec3f(0.0f, 0.0f, 0.0f));
-					v->push_back(osg::Vec3f(0.0f, cooDimMax[1], 0.0f));
-					v->push_back(osg::Vec3f(0.0f, 0.0f, 0.0f));
-					v->push_back(osg::Vec3f(0.0f, 0.0f, cooDimMax[2]));
-					geom->setVertexArray(v.get());
-
-					osg::ref_ptr<osg::Vec4Array> c = new osg::Vec4Array();
-					c->push_back(osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f));
-					c->push_back(osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f));
-					c->push_back(osg::Vec4(0.0f, 1.0f, 0.0f, 1.0f));
-					c->push_back(osg::Vec4(0.0f, 1.0f, 0.0f, 1.0f));
-					c->push_back(osg::Vec4(0.0f, 0.0f, 1.0f, 1.0f));
-					c->push_back(osg::Vec4(0.0f, 0.0f, 1.0f, 1.0f));
-					geom->setColorArray(c.get());
-					geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
-
-					geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2));
-					geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 2, 2));
-					geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 4, 2));
-
-					osg::ref_ptr<osg::Geode> axisGeode = new osg::Geode();
-
-					axisGeode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-					axisGeode->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-					axisGeode->getOrCreateStateSet()->setAttribute(new osg::LineWidth(3.0f), osg::StateAttribute::ON);
-
-					axisGeode->addDrawable(geom.get());
-					return axisGeode.release();
-				}
-
-				/*
-				* 函数: GetVec
-				* 功能: 得到散点的三维球坐标
+				* 函数: GetDiscreteVec
+				* 功能: 得到离散数据的散点的三维球坐标
 				* 参数:
 				* -- eps : 误差
 				* -- base : 基准值
 				*/
-				std::vector<osg::Vec3f> GetVec(
-					std::array<uint32_t, 3> graphDim, const std::array<int32_t, 3>& cooDimMax, const std::array<int32_t, 3>& cooDimMin,
+				std::vector<osg::Vec3f> GetDiscreteVec(
+					const std::array<int32_t, 3>& cooDimMax, const std::array<int32_t, 3>& cooDimMin,
 					float eps = 0.011f, float base = 30.f / 255.f)
 				{
 					std::string errMsg;
 					{
 						std::vector<osg::Vec3f> ret;
-
-						auto vec3ToSphere = [&](const osg::Vec3& v3) -> osg::Vec3 {
-							float dlt = maxLongtitute - minLongtitute;
-							float x = volStartFromLonZero == 0 ? v3.x() :
-								v3.x() < .5f ? v3.x() + .5f : v3.x() - .5f;
-							float lon = minLongtitute + x * dlt;
-							dlt = maxLatitute - minLatitute;
-							float lat = minLatitute + v3.y() * dlt;
-							dlt = maxHeight - minHeight;
-							float h = minHeight + v3.z() * dlt;
-
-							osg::Vec3 ret;
-							ret.z() = h * sinf(lat);
-							h = h * cosf(lat);
-							ret.y() = h * sinf(lon);
-							ret.x() = h * cosf(lon);
-
-							return ret;
-						};
 						
 						for (size_t i = 0; i < volDiscreteDat->size(); ++i) {
-							//if (volDat->at(i) < (base - eps) || volDat->at(i) > (base + eps)) continue;
-							/*int z = i / volDimYxX;
-							int y = (i - z * volDimYxX) / volDim[0];
-							int x = i - z * volDimYxX - y * volDim[0];*/
-
 							osg::Vec3f pointer1 = volDiscreteDat->at(i);
 							osg::Vec3f volLoc = osg::Vec3f((pointer1.x() - cooDimMin[0]) * 1.0f / (cooDimMax[0] - cooDimMin[0]), (pointer1.y() - cooDimMin[1]) * 1.0f / (cooDimMax[1] - cooDimMin[1]), (pointer1.z() - cooDimMin[2]) * 1.0f / (cooDimMax[2] - cooDimMin[2]));
-							//osg::Vec3f sphereLoc = vec3ToSphere(volLoc);
 
 							ret.push_back(volLoc);
 						}
 						return ret;
-						//std::cout << "sphere: " << ret.
 					}
 				ERR:
 					std::cerr << errMsg << std::endl;
@@ -401,13 +267,13 @@ namespace SciVis
 				}
 
 				/*	
-				* 函数: GetVec
-				* 功能: 得到散点的三维球坐标
+				* 函数: GetConsecutiveVec
+				* 功能: 得到连续数据的散点的三维球坐标
 				* 参数:
 				* -- eps : 误差
 				* -- base : 基准值
 				*/
-				std::vector<osg::Vec3f> GetVec(
+				std::vector<osg::Vec3f> GetConsecutiveVec(
 					std::array<uint32_t, 3> graphDim, std::array<uint8_t, 3> logDstDim,
 					float eps = 0.011f, float base = 30.f / 255.f)
             	{	
@@ -734,39 +600,6 @@ namespace SciVis
 			{
 				return vols.size();
 			}
-
-			/* 读取txt点云文件 */
-			static std::vector<osg::Vec3f> LoadFromTxt(const std::string& filePath, std::string* errMsg = nullptr)
-			{
-				std::ifstream is(filePath);
-				if (!is.is_open()) {
-					if (errMsg) 
-						*errMsg = "Invalid File Path";
-					return std::vector<osg::Vec3f>();
-				}
-
-				std::string line;
-				std::vector<osg::Vec3f> ret;
-				int flag = 0;
-				while (std::getline(is, line)) {
-					if (flag == 0) {
-						flag++;
-						continue;
-					}
-					float x, y, z;
-					std::stringstream ss(line);
-					ss >> x;
-					ss >> y;
-					ss >> z;
-					osg::Vec3f point(x, y, z);
-					ret.push_back(point);
-					flag--;
-				}
-				return ret;
-
-			}
-
-            
             
         }; // class ScatterPlot
     } // namespace InfoViser

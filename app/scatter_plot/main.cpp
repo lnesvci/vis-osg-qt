@@ -46,12 +46,10 @@ int main(int argc, char** argv)
 	std::shared_ptr<SciVis::InfoViser::ScatterPlot> mcb
 		= std::make_shared<SciVis::InfoViser::ScatterPlot>();
 	std::string errMsg;
-	{
-		/*auto volU8Dat = SciVis::Loader::RAWVolume::LoadU8FromFile(volPath, dim);
+	{	
+		auto volDiscreteDat = SciVis::Loader::TXTVolume::LoadFromFile(volDPath);
 		if (!errMsg.empty())
 			goto ERR;
-		auto volDat = SciVis::Convertor::RAWVolume::U8ToNormalizedFloat(volU8Dat);*/
-		auto volDiscreteDat = SciVis::InfoViser::ScatterPlot::LoadFromTxt(volDPath);
 		auto volDatShrd = std::make_shared<std::vector<osg::Vec3f>>(volDiscreteDat);
 		mcb->AddDiscreteVolume(volName, volDatShrd);
 		auto vol = mcb->GetVolume(volName);
@@ -61,12 +59,8 @@ int main(int argc, char** argv)
 		vol->SetHeightFromCenterRange(
 			static_cast<float>(osg::WGS_84_RADIUS_EQUATOR) + hScale * hRng[0],
 			static_cast<float>(osg::WGS_84_RADIUS_EQUATOR) + hScale * hRng[1]);
-		/*std::vector<osg::Vec3f> point = vol->GetVec(graphDim, log2Dim);
+	    std::vector<osg::Vec3f> point = vol->GetDiscreteVec(coordinateDimMax, coordinateDimMin);
 		vol->DrawPlot(point);
-		grp->addChild(vol->MakeCoordinate());*/
-	    std::vector<osg::Vec3f> point = vol->GetVec(graphDim, coordinateDimMax, coordinateDimMin);
-		vol->DrawPlot(point);
-		// grp->addChild(vol->MakeCoordinate(coordinateDimMax, coordinateDimMin));
 		grp->addChild(vol->MakeCoordinate());
 	}
     
@@ -84,7 +78,6 @@ int main(int argc, char** argv)
 			prevClk = clock();
 		}
 	}
-
 	return 0;
 
 ERR:
@@ -92,62 +85,3 @@ ERR:
 	return 1;
 
 }
-
-
-//int main(int argc, char** argv)
-//{
-//	SciVis::InfoViser::ScatterPlot p;
-//	auto* viewer = new osgViewer::Viewer;
-//	viewer->setUpViewInWindow(200, 50, 800, 600);
-//
-//	// Па»ъ
-//	auto* manipulator = new osgGA::TrackballManipulator;
-//	viewer->setCameraManipulator(manipulator);
-//
-//	osg::ref_ptr<osg::Group> grp = new osg::Group;
-//	grp->addChild(createEarth());
-//
-//	std::shared_ptr<SciVis::InfoViser::ScatterPlot> mcb
-//		= std::make_shared<SciVis::InfoViser::ScatterPlot>();
-//	std::string errMsg;
-//	{
-//		auto volU8Dat = SciVis::Loader::RAWVolume::LoadU8FromFile(volPath, dim);
-//		if (!errMsg.empty())
-//			goto ERR;
-//		auto volDat = SciVis::Convertor::RAWVolume::U8ToNormalizedFloat(volU8Dat);
-//		auto volDatShrd = std::make_shared<std::vector<float>>(volDat);
-//		mcb->AddVolume(volName, volDatShrd, dim);
-//		auto vol = mcb->GetVolume(volName);
-//		vol->SetLongtituteRange(lonRng[0], lonRng[1]);
-//		vol->SetLatituteRange(latRng[0], latRng[1]);
-//		vol->SetHeightFromCenterRange(.7f, .75f);
-//		vol->SetHeightFromCenterRange(
-//			static_cast<float>(osg::WGS_84_RADIUS_EQUATOR) + hScale * hRng[0],
-//			static_cast<float>(osg::WGS_84_RADIUS_EQUATOR) + hScale * hRng[1]);
-//		std::vector<osg::Vec3f> point = vol->GetVec(graphDim, log2Dim);
-//		vol->DrawPlot(point);
-//		grp->addChild(vol->MakeCoordinate());
-//	}
-//    
-//    grp->addChild(mcb->GetGroup());
-//
-//	viewer->setSceneData(grp);
-//
-//	auto prevClk = clock();
-//	while (!viewer->done()) {
-//		auto currClk = clock();
-//		auto duration = currClk - prevClk;
-//
-//		if (duration >= CLOCKS_PER_SEC / 45) {
-//			viewer->frame();
-//			prevClk = clock();
-//		}
-//	}
-//
-//	return 0;
-//
-//ERR:
-//	std::cerr << errMsg << std::endl;
-//	return 1;
-//
-//}
