@@ -89,10 +89,10 @@ namespace SciVis
 				std::vector<osg::Vec3f> ret;
 				int flag = 0;
 				while (std::getline(is, line)) {
-					if (flag == 0) {
+					/*if (flag == 0) {
 						flag++;
 						continue;
-					}
+					}*/
 					float x, y, z;
 					std::stringstream ss(line);
 					ss >> x;
