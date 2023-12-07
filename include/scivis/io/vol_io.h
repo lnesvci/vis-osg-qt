@@ -2,8 +2,10 @@
 #define SCIVIS_IO_VOL_IO_H
 
 #include <fstream>
+#include <string>
 #include <sstream>
 #include <limits>
+#include <iostream>
 
 #include <array>
 #include <vector>
@@ -100,11 +102,45 @@ namespace SciVis
 					ss >> z;
 					osg::Vec3f point(x, y, z);
 					ret.push_back(point);
-					flag--;
+					//flag--;
 				}
 				return ret;
 
 			}
+			///* ¶ÁÈ¡txt±ý×´Í¼ÎÄ¼þ */
+			//static std::vector<std::pair<std::wstring, float>> LoadFromPieFile(const std::string& filePath, std::string* errMsg = nullptr)
+			//{
+			//	std::wifstream is(filePath);
+			//	if (!is.is_open()) {
+			//		if (errMsg)
+			//			*errMsg = "Invalid File Path";
+			//		return std::vector<std::pair<std::wstring, float>>();
+			//	}
+
+			//	std::wstring line;
+			//	std::vector<std::pair<std::wstring, float>> ret;
+			//	int flag = 0;
+			//	while (std::getline(is, line)) {
+			//		/*if (flag == 0) {
+			//			flag++;
+			//			continue;
+			//		}*/
+			//		std::wstring label;
+			//		float proportion;
+			//		std::wstringstream ss(line);
+			//		ss >> label;
+			//		ss >> proportion;
+
+			//		std::wcout << label << L" " << proportion << std::endl;
+			//		std::wcout << line << std::endl;
+
+
+			//		ret.push_back(std::make_pair(label, proportion));
+			//		//flag--;
+			//	}
+			//	return ret;
+
+			//}
 		};
 
 		class LabeledTXTVolume
