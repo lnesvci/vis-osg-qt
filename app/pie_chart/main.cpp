@@ -54,10 +54,11 @@ int main(int argc, char** argv)
 	std::string errMsg;
 	{
 		std::vector<std::pair<const wchar_t*, float>> pieDat0;
-		pieDat0.push_back(std::make_pair(L"我", 0.1f));
-		pieDat0.push_back(std::make_pair(L"爱", 0.5f));
-		pieDat0.push_back(std::make_pair(L"你", 0.25f));
-		pieDat0.push_back(std::make_pair(L"w", 0.15f));
+		pieDat0.push_back(std::make_pair(L"第一季度", 0.2f));
+		pieDat0.push_back(std::make_pair(L"第二季度", 0.3f));
+		pieDat0.push_back(std::make_pair(L"第三季度", 0.4f));
+		pieDat0.push_back(std::make_pair(L"第四季度", 0.1f));
+		//pieDat0.push_back(std::make_pair(L"w", 0.15f));
 
 		if (!errMsg.empty())
 			goto ERR;
@@ -72,7 +73,7 @@ int main(int argc, char** argv)
 			static_cast<float>(osg::WGS_84_RADIUS_EQUATOR) + hScale * hRng[1]);
 
 		grp->addChild(vol0->MakePieChart());
-		grp->addChild(vol0->MakeCoordinate());
+		//grp->addChild(vol0->MakeCoordinate());
 
 	}
 

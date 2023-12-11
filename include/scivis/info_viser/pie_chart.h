@@ -482,7 +482,7 @@ namespace SciVis
 				* 函数: MakePieChart
 				* 功能: 绘制饼状图
 				*/
-				osg::Geode* MakePieChart()
+				osg::Geode* MakePieChart(float fontSize = osg::WGS_84_RADIUS_EQUATOR / 40)
 				{
 					auto vec3ToSphere = [&](const osg::Vec3& v3) -> osg::Vec3 {
 						float dlt = maxLongtitute - minLongtitute;
@@ -660,6 +660,30 @@ namespace SciVis
 							pGeom->setNormalArray(normals, osg::Array::BIND_OVERALL);
 							pcGeode->addDrawable(pGeom.get());
 						}
+
+						// 文字标注
+						osg::ref_ptr<osgText::Text> dText = new osgText::Text;
+						dText->setFont("fonts/simhei.ttf");
+						dText->setCharacterSize(fontSize);
+						dText->setAxisAlignment(osgText::Text::SCREEN);
+						dText->setPosition(vec3ToSphere(osg::Vec3f(bottomCenterPoint.x() + 0.55 * sinf(deg2Rad(startAngle + prop * 360.0 / 2)), bottomCenterPoint.y() + 0.55 * cosf(deg2Rad(startAngle + prop * 360.0 / 2)), prop + 0.1)));
+						dText->setColor(osg::Vec4(1.0, 1.0, 1.0, 1.0));
+						dText->setText(pieDat->at(i).first);
+
+						osg::ref_ptr<osgText::Text> pText = new osgText::Text;
+						pText->setFont("fonts/simhei.ttf");
+						pText->setCharacterSize(fontSize);
+						pText->setAxisAlignment(osgText::Text::SCREEN);
+						pText->setPosition(vec3ToSphere(osg::Vec3f(bottomCenterPoint.x() + 0.65 * sinf(deg2Rad(startAngle + prop * 360.0 / 2 + 5.0)), bottomCenterPoint.y() + 0.65 * cosf(deg2Rad(startAngle + prop * 360.0 / 2 + 5.0)), prop + 0.1)));
+						pText->setColor(osg::Vec4(1.0, 1.0, 1.0, 1.0));
+						
+						float percent = pieDat->at(i).second * 100;
+						std::string str = std::to_string(percent);
+						str = str.substr(0, str.find(".") + 2);
+						str = str + "%";
+						pText->setText(str);
+						pcGeode->addDrawable(dText.get());
+						pcGeode->addDrawable(pText.get());
 						
 
 						startAngle += prop * 360.0;
